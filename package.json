@@ -1,6 +1,6 @@
 {
   "name": "@s2study/draw-viewer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "drawchatのビューア",
   "main": "index.js",
   "scripts": {
