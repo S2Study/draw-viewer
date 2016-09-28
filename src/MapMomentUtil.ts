@@ -1,11 +1,13 @@
-import DrawMoment = drawchat.core.DrawMoment;
-import Layer = drawchat.Layer;
+import drawchat from "@s2study/draw-api";
+
+import DrawMoment = drawchat.history.DrawMoment;
+import Layer = drawchat.structures.Layer;
 import NamedLayer = drawchat.viewer.NamedLayer;
 import LayerMap = drawchat.viewer.LayerMap;
 
-import DrawLayerMoment = drawchat.core.DrawLayerMoment;
+import DrawLayerMoment = drawchat.history.DrawLayerMoment;
 
-export class MapMomentUtil{
+export class MapMomentUtil {
 
 	/**
 	 * 編集履歴をlayer毎に区分けして表示順にまとめる。
@@ -14,12 +16,11 @@ export class MapMomentUtil{
 	 * @returns {Array}
 	 */
 	static mapToMomentsArray(
-		moments:DrawMoment[],
-		sequences:string[]
-	):NamedLayer[]{
-		let layerMap = MapMomentUtil.mapMoments(moments,sequences);
-		let result:NamedLayer[] = [];
-		for(let layerId of sequences){
+		moments: DrawMoment[],
+		sequences: string[]): NamedLayer[] {
+		let layerMap = MapMomentUtil.mapMoments(moments, sequences);
+		let result: NamedLayer[] = [];
+		for (let layerId of sequences) {
 			result.push(layerMap[layerId]);
 		}
 		return result;
@@ -32,10 +33,9 @@ export class MapMomentUtil{
 	 * @returns {Array}
 	 */
 	static mapToLayerMap(
-		moments:DrawMoment[],
-		sequences:string[]
-	):LayerMap{
-		return MapMomentUtil.mapMoments(moments,sequences);
+		moments: DrawMoment[],
+		sequences: string[]): LayerMap {
+		return MapMomentUtil.mapMoments(moments, sequences);
 	}
 
 	/**
@@ -44,22 +44,21 @@ export class MapMomentUtil{
 	 * @param layer2
 	 */
 	static concatLayer(
-		layer1:NamedLayer = {layerId:null,draws:[]},
-		layer2:NamedLayer = {layerId:null,draws:[]}
-	):NamedLayer{
-		if(layer2.clip){
+		layer1: NamedLayer = {layerId: null, draws: []},
+		layer2: NamedLayer = {layerId: null, draws: []}): NamedLayer {
+		if (layer2.clip) {
 			layer1.clip = layer2.clip;
 		}
-		if(layer2.transform){
+		if (layer2.transform) {
 			layer1.transform = layer2.transform;
 		}
 
 		let i = 0 | 0;
-		while(i < layer2.draws.length){
+		while (i < layer2.draws.length) {
 			layer1.draws.push(layer2.draws[i]);
 			i = (i + 1) | 0;
 		}
-		if(layer1.layerId == null){
+		if (layer1.layerId == null) {
 			layer1.layerId = layer2.layerId;
 		}
 		return layer1;
@@ -72,21 +71,20 @@ export class MapMomentUtil{
 	 * @returns {Array}
 	 */
 	private static mapMoments(
-		moments:DrawMoment[],
-		sequences:string[]
-	):LayerMap{
-		let layerMap:LayerMap = {};
-		if(sequences == null){
+		moments: DrawMoment[],
+		sequences: string[]): LayerMap {
+		let layerMap: LayerMap = {};
+		if (sequences == null) {
 			return layerMap;
 		}
-		for(let layerId of sequences){
-			layerMap[layerId] = {layerId:layerId,draws:[]};
+		for (let layerId of sequences) {
+			layerMap[layerId] = {layerId: layerId, draws: []};
 		}
-		if(moments == null){
+		if (moments == null) {
 			return layerMap;
 		}
-		for(let moment of moments){
-			MapMomentUtil.mapMoment(layerMap,moment);
+		for (let moment of moments) {
+			MapMomentUtil.mapMoment(layerMap, moment);
 		}
 		return layerMap;
 	}
@@ -96,28 +94,28 @@ export class MapMomentUtil{
 	 * @param layerMap
 	 * @param moment
 	 */
-	static mapMoment(layerMap:LayerMap,moment:DrawMoment):void{
+	static mapMoment(layerMap: LayerMap, moment: DrawMoment): void {
 
 		let keys = moment.getKeys();
 		let i = 0 | 0;
 		let len = keys.length;
-		var layerMoment:DrawLayerMoment;
-		var layer:NamedLayer;
+		let layerMoment: DrawLayerMoment;
+		let layer: NamedLayer;
 
-		while(i < len){
+		while (i < len) {
 			layerMoment = moment.getLayerMoment(keys[i]);
 			layer = layerMap[keys[i]];
 			i = (i + 1) | 0;
-			if(layer == null){
+			if (layer == null) {
 				continue;
 			}
-			if(layerMoment.getClip() != null){
+			if (layerMoment.getClip() != null) {
 				layer.clip = layerMoment.getClip();
 			}
-			if(layerMoment.getTransform() != null){
+			if (layerMoment.getTransform() != null) {
 				layer.transform = layerMoment.getTransform();
 			}
-			MapMomentUtil.addDrawsToLayer(layerMoment,layer);
+			MapMomentUtil.addDrawsToLayer(layerMoment, layer);
 		}
 	}
 
@@ -126,14 +124,14 @@ export class MapMomentUtil{
 	 * @param layerMoment
 	 * @param layer
 	 */
-	private static  addDrawsToLayer(layerMoment:DrawLayerMoment,layer:Layer){
+	private static  addDrawsToLayer(layerMoment: DrawLayerMoment, layer: Layer) {
 		let draws = layerMoment.getDraws();
-		if(draws == null || draws.length === 0){
+		if (draws == null || draws.length === 0) {
 			return;
 		}
 
 		let i = 0 | 0;
-		while(i < draws.length){
+		while (i < draws.length) {
 			layer.draws.push(draws[i]);
 			i = (i + 1) | 0;
 		}
