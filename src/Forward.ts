@@ -1,4 +1,4 @@
-import drawchat from "@s2study/draw-api";
+import * as drawchat from "@s2study/draw-api";
 
 import DrawchatRenderer = drawchat.renderer.DrawchatRenderer;
 import NamedLayer = drawchat.viewer.NamedLayer;
