@@ -16,8 +16,10 @@ export class Viewer implements DrawchatViewer {
 	private sequencesNow: string[] = null;
 	private now: number;
 
-	constructor(history: DrawHistory,
-				renderer: DrawchatRenderer) {
+	constructor(
+		history: DrawHistory,
+		renderer: DrawchatRenderer
+	) {
 		this.history = history;
 		this.renderer = renderer;
 		this.now = -1;
