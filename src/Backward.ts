@@ -1,13 +1,12 @@
 import * as drawchat from "@s2study/draw-api";
 
 import DrawchatRenderer = drawchat.renderer.DrawchatRenderer;
-import NamedLayer = drawchat.viewer.NamedLayer;
-import LayerMap = drawchat.viewer.LayerMap;
 import DrawMoment = drawchat.history.DrawMoment;
 
 import {MapMomentUtil} from "./MapMomentUtil";
 import {CheckStateUtils} from "./CheckStateUtils";
 import {UpdateState, UpdateStateMap} from "./UpdateState";
+import {NamedLayer} from "./NamedLayer";
 export class Backward {
 
 	static updateView(
@@ -40,7 +39,7 @@ export class Backward {
 			layer = pastLayers[i];
 			i = (i + 1) | 0;
 
-			state = updateStateMap[layer.layerId];
+			state = updateStateMap[layer.layerId!];
 			if (state === UpdateState.ADD || state === UpdateState.NON) {
 				continue;
 			}

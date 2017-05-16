@@ -1,19 +1,18 @@
 import * as drawchat from "@s2study/draw-api";
 
-import DrawchatViewer = drawchat.viewer.DrawchatViewer;
 import DrawchatRenderer = drawchat.renderer.DrawchatRenderer;
 import DrawHistory = drawchat.history.DrawHistory;
 import DrawMoment = drawchat.history.DrawMoment;
 import DrawLayerMoment = drawchat.history.DrawLayerMoment;
 import Layer = drawchat.structures.Layer;
-import NamedLayer = drawchat.viewer.NamedLayer;
 import {Backward} from "./Backward";
 import {Forward} from "./Forward";
-export class Viewer implements DrawchatViewer {
+
+export class DrawViewer {
 
 	private history: DrawHistory;
 	private renderer: DrawchatRenderer;
-	private sequencesNow: string[] = null;
+	private sequencesNow: string[];
 	private now: number;
 
 	constructor(
@@ -22,6 +21,7 @@ export class Viewer implements DrawchatViewer {
 	) {
 		this.history = history;
 		this.renderer = renderer;
+		this.sequencesNow = [];
 		this.now = -1;
 	}
 
@@ -118,4 +118,4 @@ export class Viewer implements DrawchatViewer {
 		this.now = number1;
 	}
 }
-export default Viewer;
+export default DrawViewer;

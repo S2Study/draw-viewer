@@ -1,13 +1,12 @@
 import * as drawchat from "@s2study/draw-api";
 
 import DrawchatRenderer = drawchat.renderer.DrawchatRenderer;
-import NamedLayer = drawchat.viewer.NamedLayer;
-import LayerMap = drawchat.viewer.LayerMap;
 import DrawMoment = drawchat.history.DrawMoment;
 
 import {CheckStateUtils} from "./CheckStateUtils";
 import {MapMomentUtil} from "./MapMomentUtil";
 import {UpdateState, UpdateStateMap} from "./UpdateState";
+import {NamedLayer} from "./NamedLayer";
 
 /**
  * 前方向への更新
@@ -28,7 +27,8 @@ export class Forward {
 		sequencesNow: string[],
 		sequencesNext: string[],
 		pastMoments: DrawMoment[],
-		futureMoments: DrawMoment[]): string[] {
+		futureMoments: DrawMoment[]
+	): string[] {
 
 		let pastMap = MapMomentUtil.mapToLayerMap(pastMoments, sequencesNow);
 		let layers = MapMomentUtil.mapToMomentsArray(futureMoments, sequencesNext);
@@ -51,17 +51,17 @@ export class Forward {
 			layer = layers[i];
 			i = (i + 1) | 0;
 
-			if (updateStateMap[layer.layerId] === UpdateState.NON) {
+			if (updateStateMap[layer.layerId!] === UpdateState.NON) {
 				continue;
 			}
 			if (
-				updateStateMap[layer.layerId] === UpdateState.UPDATE
+				updateStateMap[layer.layerId!] === UpdateState.UPDATE
 			// ||	updateStateMap[layer.layerId] === UpdateState.ADD
 			) {
 				renderer.renderDiff(i - 1, layer.draws);
 				continue;
 			}
-			layer = MapMomentUtil.concatLayer(pastMap[layer.layerId], layer);
+			layer = MapMomentUtil.concatLayer(pastMap[layer.layerId!], layer);
 			renderer.render(i - 1, layer.draws, layer.transform, layer.clip);
 		}
 		return sequencesNext;
@@ -70,7 +70,8 @@ export class Forward {
 	static complementLayer(
 		renderer: DrawchatRenderer,
 		layerIds1: string[],
-		updateStateMap: UpdateStateMap): string[] {
+		updateStateMap: UpdateStateMap
+	): string[] {
 
 		let layerIds: string[] = layerIds1 != null ? layerIds1 : [];
 		let i = (layerIds.length - 1) | 0;

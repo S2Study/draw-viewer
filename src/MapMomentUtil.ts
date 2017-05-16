@@ -2,10 +2,12 @@ import * as drawchat from "@s2study/draw-api";
 
 import DrawMoment = drawchat.history.DrawMoment;
 import Layer = drawchat.structures.Layer;
-import NamedLayer = drawchat.viewer.NamedLayer;
-import LayerMap = drawchat.viewer.LayerMap;
 
 import DrawLayerMoment = drawchat.history.DrawLayerMoment;
+import {LayerMap, NamedLayer, NamedLayerFactory} from "./NamedLayer";
+import {DrawAPIUtils} from "@s2study/draw-api/lib/DrawAPIUtils";
+
+const DEFAULT_NAMED_LAYER: NamedLayer = NamedLayerFactory.createInstance();
 
 export class MapMomentUtil {
 
@@ -17,7 +19,8 @@ export class MapMomentUtil {
 	 */
 	static mapToMomentsArray(
 		moments: DrawMoment[],
-		sequences: string[]): NamedLayer[] {
+		sequences: string[]
+	): NamedLayer[] {
 		let layerMap = MapMomentUtil.mapMoments(moments, sequences);
 		let result: NamedLayer[] = [];
 		for (let layerId of sequences) {
@@ -34,7 +37,8 @@ export class MapMomentUtil {
 	 */
 	static mapToLayerMap(
 		moments: DrawMoment[],
-		sequences: string[]): LayerMap {
+		sequences: string[]
+	): LayerMap {
 		return MapMomentUtil.mapMoments(moments, sequences);
 	}
 
@@ -44,24 +48,17 @@ export class MapMomentUtil {
 	 * @param layer2
 	 */
 	static concatLayer(
-		layer1: NamedLayer = {layerId: null, draws: []},
-		layer2: NamedLayer = {layerId: null, draws: []}): NamedLayer {
-		if (layer2.clip) {
-			layer1.clip = layer2.clip;
-		}
-		if (layer2.transform) {
-			layer1.transform = layer2.transform;
-		}
-
-		let i = 0 | 0;
-		while (i < layer2.draws.length) {
-			layer1.draws.push(layer2.draws[i]);
-			i = (i + 1) | 0;
-		}
-		if (layer1.layerId == null) {
-			layer1.layerId = layer2.layerId;
-		}
-		return layer1;
+		layer1?: NamedLayer | null,
+		layer2?: NamedLayer | null
+	): NamedLayer {
+		const layer_1: NamedLayer = DrawAPIUtils.complement(layer1, DEFAULT_NAMED_LAYER);
+		const layer_2: NamedLayer = DrawAPIUtils.complement(layer2, DEFAULT_NAMED_LAYER);
+		return NamedLayerFactory.createInstance(
+			DrawAPIUtils.complement(layer_1.layerId, layer_2.layerId),
+			layer_1.draws.concat(layer_2.draws),
+			layer_2.transform.isDefault === false ? layer_2.transform : layer_1.transform,
+			layer_2.clip !== null ? layer_2.clip : layer_1.clip
+		);
 	}
 
 	/**
@@ -72,13 +69,14 @@ export class MapMomentUtil {
 	 */
 	private static mapMoments(
 		moments: DrawMoment[],
-		sequences: string[]): LayerMap {
+		sequences: string[]
+	): LayerMap {
 		let layerMap: LayerMap = {};
 		if (sequences == null) {
 			return layerMap;
 		}
 		for (let layerId of sequences) {
-			layerMap[layerId] = {layerId: layerId, draws: []};
+			layerMap[layerId] = NamedLayerFactory.createInstance(layerId);
 		}
 		if (moments == null) {
 			return layerMap;
@@ -99,41 +97,25 @@ export class MapMomentUtil {
 		let keys = moment.getKeys();
 		let i = 0 | 0;
 		let len = keys.length;
-		let layerMoment: DrawLayerMoment;
+		let layerMoment: DrawLayerMoment | null;
 		let layer: NamedLayer;
 
 		while (i < len) {
-			layerMoment = moment.getLayerMoment(keys[i]);
-			layer = layerMap[keys[i]];
+
+			const key = keys[i];
 			i = (i + 1) | 0;
-			if (layer == null) {
+
+			layerMoment = moment.getLayerMoment(key);
+			layer = layerMap[key];
+			if (layerMoment === null || layer === undefined) {
 				continue;
 			}
-			if (layerMoment.getClip() != null) {
-				layer.clip = layerMoment.getClip();
-			}
-			if (layerMoment.getTransform() != null) {
-				layer.transform = layerMoment.getTransform();
-			}
-			MapMomentUtil.addDrawsToLayer(layerMoment, layer);
-		}
-	}
-
-	/**
-	 * LayerMomentのDrawを1つのLayerオブジェクトに統合する。
-	 * @param layerMoment
-	 * @param layer
-	 */
-	private static  addDrawsToLayer(layerMoment: DrawLayerMoment, layer: Layer) {
-		let draws = layerMoment.getDraws();
-		if (draws == null || draws.length === 0) {
-			return;
-		}
-
-		let i = 0 | 0;
-		while (i < draws.length) {
-			layer.draws.push(draws[i]);
-			i = (i + 1) | 0;
+			layerMap[key] = NamedLayerFactory.createInstance(
+				layer.layerId,
+				layer.draws.concat(layerMoment.getDraws()),
+				layerMoment.getTransform(),
+				layerMoment.getClip(),
+			);
 		}
 	}
 }

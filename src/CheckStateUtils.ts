@@ -1,7 +1,7 @@
 import * as drawchat from "@s2study/draw-api";
 
-import NamedLayer = drawchat.viewer.NamedLayer;
 import {UpdateState, UpdateStateMap} from "./UpdateState";
+import {NamedLayer} from "./NamedLayer";
 
 export class CheckStateUtils {
 
@@ -62,19 +62,19 @@ export class CheckStateUtils {
 			layer = afterLayers[i];
 			i = (i + 1) | 0;
 
-			if (map[layer.layerId] == null) {
-				map[layer.layerId] = UpdateState.ADD;
+			if (map[layer.layerId!] == null) {
+				map[layer.layerId!] = UpdateState.ADD;
 				continue;
 			}
 			if (layer.clip != null || layer.transform != null) {
-				map[layer.layerId] = UpdateState.UPDATE_ALL;
+				map[layer.layerId!] = UpdateState.UPDATE_ALL;
 				continue;
 			}
 			if (layer.draws.length > 0) {
-				map[layer.layerId] = UpdateState.UPDATE;
+				map[layer.layerId!] = UpdateState.UPDATE;
 				continue;
 			}
-			map[layer.layerId] = UpdateState.NON;
+			map[layer.layerId!] = UpdateState.NON;
 		}
 		return map;
 	}

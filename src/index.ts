@@ -1,13 +1,12 @@
 import * as drawchat from "@s2study/draw-api";
 
-import DrawchatViewer = drawchat.viewer.DrawchatViewer;
 import DrawchatRenderer = drawchat.renderer.DrawchatRenderer;
 import DrawHistory = drawchat.history.DrawHistory;
-import {Viewer} from "./Viewer";
+import {DrawViewer} from "./DrawViewer";
 export function createInstance(
 	history: DrawHistory,
-	renderer: DrawchatRenderer): DrawchatViewer {
-	return new Viewer(history, renderer);
+	renderer: DrawchatRenderer): DrawViewer {
+	return new DrawViewer(history, renderer);
 }
 
 export default createInstance;
